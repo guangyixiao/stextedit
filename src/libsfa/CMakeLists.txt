@@ -1,6 +1,6 @@
 PROJECT (libsfa)
 # add libjson lib
-SET(libjson ../../../libs/libjson-master)
+SET(libjson ../../../../libs/libjson-master)
 INCLUDE_DIRECTORIES( ${libjson})
 
 SET(libsfa_Files

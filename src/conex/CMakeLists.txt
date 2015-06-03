@@ -39,7 +39,7 @@ file(GLOB_RECURSE HEADERS ${conex_SOURCE_DIR}/*.h)
 SET(libxpm ../libxpm)
 SET(libconex ../libconex)
 SET(libsfa ../libsfa)
-SET(libjson ../../libs/libjson-master)
+SET(libjson ../../../libs/libjson-master)
 
 INCLUDE_DIRECTORIES( ${libxpm}
                      ${libconex}
