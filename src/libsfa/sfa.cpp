@@ -12,6 +12,11 @@ void sfa_block::push_back(const sfa_map& map) {
 	_maps.push_back(map);
 }
 
+void sfa_block::clear() {
+	_ix = 0;
+	_maps.clear();
+}
+
 int sfa_block::size() {
 	return _maps.size();
 }

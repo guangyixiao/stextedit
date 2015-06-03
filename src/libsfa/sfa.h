@@ -51,6 +51,7 @@ public:
 	sfa_block(int ix = 0):_ix(ix) {}
 	void push_back(const sfa_map& map);
 	int size();
+	void clear();
 	int ix();
 	void setIx(int ix);
 	int end();

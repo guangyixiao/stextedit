@@ -4,7 +4,9 @@ SET(libjson ../../../../libs/libjson-master)
 INCLUDE_DIRECTORIES( ${libjson})
 
 SET(libsfa_Files
+    ./sfa_parser.cpp
     ./sfa.cpp
+	./sfa_sign.cpp
 )
 
 file(GLOB_RECURSE HEADERS ${libsfa_SOURCE_DIR}/*.h)
