@@ -41,8 +41,21 @@ private:
 	std::vector<sfa_sign*> _items;
 	int _type;
 };
+
+inline sfa_arr::~sfa_arr() {
+	for (vector<sfa_sign*>::iterator i = _items.begin(); i != _items.end(); ++i){
+		delete *i;
+		*i = 0;
+	}
+	_items.clear();
+}
+
 inline int sfa_arr::type() {
 	return _type;
+}
+
+inline void sfa_arr::set_type(int type){
+	_type = type;
 }
 
 inline bool sfa_arr::empty() {
