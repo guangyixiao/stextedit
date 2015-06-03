@@ -15,17 +15,17 @@
 #define SFA_ERROR_PART_KEY -5;
 
 using namespace std;
-class sfa_sign;
 
 class sfa_parser {
 public:
 	sfa_parser() : _toksuper(0), _toklast(0), _pos(0), _count(0) {}
-	int parse(const wstring& syntax, const sfa_model& doc, sfa_sign& r);
+	// two input with syntax and doc, one output with sfa_sign
+	int parse(const wstring& syntax, sfa_model& doc, sfa_sign& r);
 	void clear();
 private:
 	int parse_string(const wstring& syntax);
 	int parse_primitive(const wstring& syntax);
-	int parse_atom_signs(const sfa_model& doc, sfa_sign& r);
+	int parse_atom_signs(sfa_model& doc, sfa_sign& r);
 	int _count;
 	unsigned int _pos;
 	sfa_sign* _toksuper;

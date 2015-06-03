@@ -1,8 +1,7 @@
 #include "sfa_parser.h"
 #include <cstdlib>
 
-
-int sfa_parser::parse(const wstring& syntax, const sfa_model& doc, sfa_sign& root) {
+int sfa_parser::parse(const wstring& syntax, sfa_model& doc, sfa_sign& root) {
 	_count = 0;
 	// reverse process
 	_toksuper = &root;
@@ -67,8 +66,8 @@ int sfa_parser::parse(const wstring& syntax, const sfa_model& doc, sfa_sign& roo
 		case ',':
 			if (_toklast->type() == SFA_EMPTY) {
 				_toklast->set_type(SFA_STRING);
-				_toklast->set_rei_string(_toklast->de_str());
-				_toklast->set_de_str(L"");
+				_toklast->set_value_string(_toklast->name_str());
+				_toklast->set_name_str(L"");
 			}
 			break;
 		case '-': case '0': case '1': case '2': case '3': case '4':
@@ -100,15 +99,15 @@ int sfa_parser::parse_string(const wstring& syntax) {
 				token->set_type(SFA_STRING);
 				token->set_v_start(start + 1);
 				token->set_v_end(_pos);
-				token->set_rei_string(syntax.substr(start + 1, _pos - start - 1));
+				token->set_value_string(syntax.substr(start + 1, _pos - start - 1));
 			}
 			else {
 				/* is the key if the type of last token is Object, NUMBER, BOOL*/
 				_count++;
-				token = new SDFSign(SFA_EMPTY);
+				token = new sfa_sign(SFA_EMPTY);
 				token->set_s_start(start + 1);
 				token->set_s_end(_pos);
-				token->set_de_str(syntax.substr(start + 1, _pos - start - 1));
+				token->set_name_str(syntax.substr(start + 1, _pos - start - 1));
 				_toksuper->push_back(token);
 				_toklast = token;
 			}
@@ -180,14 +179,14 @@ int sfa_parser::parse_primitive(const wstring& syntax) {
 			}
 			else {
 				++_count;
-				token = new SDFSign(type);
+				token = new sfa_sign(type);
 				token->set_v_start(start);
 				token->set_v_end(_pos);
 				_toksuper->push_back(token);
 				_toklast = token;
 			}
 			if (type == SFA_NUMBER) {
-				token->set_rei_number(_wtof(syntax.substr(start, _pos - start).c_str()));
+				token->set_value_number(_wtof(syntax.substr(start, _pos - start).c_str()));
 			}
 			_pos--;
 			return 0;
@@ -203,7 +202,7 @@ int sfa_parser::parse_primitive(const wstring& syntax) {
 	return SFA_ERROR_PART_PRIMITIVE;
 }
 
-int sfa_parser::parse_atom_signs(const XpmTermDoc& doc, SDFSign& r) {
+int sfa_parser::parse_atom_signs(sfa_model& doc, sfa_sign& r) {
 	/* Check the error of the whole signs*/
 	sfa_sign* token = r.next_start();
 	while (token != 0) {
@@ -213,23 +212,23 @@ int sfa_parser::parse_atom_signs(const XpmTermDoc& doc, SDFSign& r) {
 		if (token->s_start() != -1 && token->s_end() == -1) {
 			return SFA_ERROR_PART_OBJECT_ARRAY;
 		}
-		if (token->de_str().size() > 0) {
+		if (token->name_str().size() > 0) {
 			// process in denotation
 			int start = token->s_start();
 			int len = token->s_end() - start;
-			vector<TermRange> trs = doc.findTermRanges(start, len);
-			for (vector<TermRange>::iterator it = trs.begin(); it != trs.end(); ++it) {
-				token->de_append_map(it->posInBlock(), it->text(), it->term());
+			vector<sfa_map> trs = doc.find_maps(start, len);
+			for (vector<sfa_map>::iterator it = trs.begin(); it != trs.end(); ++it) {
+				token->name_append_map(it->word_ix, it->word, it->id);
 			}
 			// needs to evaluate all words mapping in future
 		}
-		if (token->type() == SFA_STRING && token->rei_as_string().size() > 0) {
+		if (token->type() == SFA_STRING && token->value_as_string().size() > 0) {
 			// process in reification
 			int start = token->v_start();
 			int len = token->v_end() - start;
-			vector<TermRange> trs = doc.findTermRanges(start, len);
-			for (vector<TermRange>::iterator it = trs.begin(); it != trs.end(); ++it) {
-				token->rei_append_map(it->posInBlock(), it->text(), it->term());
+			vector<sfa_map> trs = doc.find_maps(start, len);
+			for (vector<sfa_map>::iterator it = trs.begin(); it != trs.end(); ++it) {
+				token->value_append_map(it->word_ix, it->word, it->id);
 			}
 		}
 		token = r.next();

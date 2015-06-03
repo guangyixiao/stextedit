@@ -23,7 +23,7 @@ _v_end(-1),
 _parent(0),
 _next_sign(0){
 	_value.set_type(SFA_STRING);
-	_name.set_de_str(de_str);
+	_name.set_name_str(de_str);
 	_value.set_string(rei_str);
 	_next = end();
 }
@@ -34,7 +34,7 @@ _v_end(-1),
 _parent(0),
 _next_sign(0){
 	_value.set_type(SFA_NUMBER);
-	_name.set_de_str(de_str);
+	_name.set_name_str(de_str);
 	_value.set_number(rei_num);
 	_next = end();
 }
@@ -46,7 +46,7 @@ _parent(0),
 _next_sign(0) {
 	int type = rei_bool == true ? SFA_TRUE : SFA_FALSE;
 	_value.set_type(type);
-	_name.set_de_str(de_str);
+	_name.set_name_str(de_str);
 	_value.set_bool(rei_bool);
 	_next = end();
 }
