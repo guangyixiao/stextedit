@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>732</width>
-    <height>734</height>
+    <height>904</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,42 +20,28 @@
    <item>
     <widget class="QGroupBox" name="gbDeotation">
      <property name="title">
-      <string>Denotation</string>
+      <string>Name</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Name  :&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <widget class="QTextEdit" name="teName">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="leDeStr">
-          <property name="enabled">
-           <bool>false</bool>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>80</height>
+           </size>
           </property>
          </widget>
         </item>
        </layout>
-      </item>
-      <item>
-       <widget class="QListView" name="lvDe">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>100</height>
-         </size>
-        </property>
-       </widget>
       </item>
      </layout>
     </widget>
@@ -63,42 +49,28 @@
    <item>
     <widget class="QGroupBox" name="gbReification">
      <property name="title">
-      <string>Reification</string>
+      <string>Value</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Value :&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <widget class="QTextEdit" name="teValue">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="leReiStr">
-          <property name="enabled">
-           <bool>false</bool>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>80</height>
+           </size>
           </property>
          </widget>
         </item>
        </layout>
-      </item>
-      <item>
-       <widget class="QListView" name="lvRei">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>100</height>
-         </size>
-        </property>
-       </widget>
       </item>
      </layout>
     </widget>

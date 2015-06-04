@@ -7,6 +7,7 @@
 #include <string>
 #include "sfa_sign.h"
 #include "SignTreeModel.h"
+#include "control/TermControl.h"
 
 using namespace std;
 
@@ -20,15 +21,18 @@ namespace xpm {
 		Q_OBJECT
 
 	public:
-		explicit SFATree(sfa_sign* root, QWidget *parent = 0);
+		explicit SFATree(conex::TermControl* control, sfa_sign* root, QWidget *parent = 0);
 		~SFATree();
 		sfa_sign* root();
 		void setRoot(sfa_sign* root);
 		public slots:
+		//a slot for selectionChangedSlot with treeview
+		void selectionChangedSlot(const QItemSelection & newSelection, const QItemSelection & oldSelection);
 	private:
 		Ui::SFATreeView *ui;
 		sfa_sign* _root;
 		SignTreeModel* _model;
+		conex::TermControl* _control;
 	};
 	inline sfa_sign* SFATree::root() {
 		return _root;

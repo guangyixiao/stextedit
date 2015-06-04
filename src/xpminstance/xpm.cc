@@ -1325,7 +1325,7 @@ namespace xpm {
 				QMessageBox mbox;
 				mbox.setText("Parsed sucess!");
 				mbox.exec();
-				xpm::SFATree tree(&s, this);
+				xpm::SFATree tree(xpmControl->termControl(),&s, this);
 				tree.exec();
 			}else {
 				QMessageBox mbox;

@@ -14,7 +14,7 @@
 #include "XpmTableDocControl.h"
 #include "sfa_parser.h"
 
-QT_FORWARD_DECLARE_CLASS(QAction)
+    QT_FORWARD_DECLARE_CLASS(QAction)
 	QT_FORWARD_DECLARE_CLASS(QComboBox)
 	QT_FORWARD_DECLARE_CLASS(QFontComboBox)
 	QT_FORWARD_DECLARE_CLASS(QTextCharFormat)

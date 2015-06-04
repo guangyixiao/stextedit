@@ -6,10 +6,14 @@ namespace xpm {
 			return QVariant();
 
 		if (role == Qt::SizeHintRole) {
-			if (index.column() == 0)
-				return QSize(300, 35);
-			else
-				return QSize(16, 35);
+			switch (index.column()) {
+			case 0:
+				return QSize(250, 35);
+			case 1:
+				return QSize(80, 35);
+			default:
+				return QSize(100, 35);
+			}
 		}
 		else if (role != Qt::DisplayRole)
 			return QVariant();
@@ -22,10 +26,8 @@ namespace xpm {
 		case 0:
 			return StringCovert::stdWToQString(item->name_str());
 		case 1:
-			return QString::number(item->type());
-		case 2:
 			return type2str(type);
-		case 3:
+		case 2:
 			return type2value(type, item);
 		default:
 			return StringCovert::stdWToQString(item->name_str());

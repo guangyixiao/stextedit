@@ -11,7 +11,7 @@
 using namespace std;
 
 namespace xpm {
-	const int Column_Size = 4;
+	const int Column_Size = 3;
 	class SignTreeModel : public QAbstractItemModel{
 	public:
 		SignTreeModel(QObject* object, sfa_sign* root = 0) :
@@ -59,7 +59,7 @@ namespace xpm {
 
 
 	inline QVariant SignTreeModel::headerData(int section, Qt::Orientation orientation, int role) const {
-		const QString headers[] = { "Name", "Type", "Type Name", "Value" };
+		const QString headers[] = { "Name", "Type", "Value" };
 		if (role == Qt::DisplayRole) {
 			if (orientation == Qt::Horizontal)
 				return headers[section];

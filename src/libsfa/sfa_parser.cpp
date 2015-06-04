@@ -15,13 +15,13 @@ int sfa_parser::parse(const wstring& syntax, sfa_model& doc, sfa_sign& root) {
 		case '{': case '[':
 			type = c == '{' ? SFA_OBJECT : SFA_ARRAY;
 			if (_toklast->type() == SFA_EMPTY) {
-				/* is string reification if the last token is NULL or ARRAY*/
+				/* it is string reification if the last token is NULL or ARRAY*/
 				token = _toklast;
 				token->set_type(type);
 				token->set_value_start(_pos);
 			}
 			else {
-				/* is the key if the type of last token is Object, NUMBER, BOOL*/
+				/* it is the name if the type of last token is Object, NUMBER, BOOL*/
 				_count++;
 				token = new sfa_sign(type);
 				_toklast = token;
