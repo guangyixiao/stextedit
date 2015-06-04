@@ -32,71 +32,72 @@ namespace xpm {
 			return QString::fromStdWString(str);
 #endif
 		}
-		static void translateAll(QTextDocument& target,   sfa_model* doc, sfa_model* _doc, conex::TermFactory* _termFactory) {
-		if (_termFactory != 0) {
-			string lang = doc->lang() == "en" ? "chs" : "en";
-			cout << "translate to :" << lang << endl;
-			conex::TermControl* _termControl = _termFactory->termControl(lang);
-			//wcout << "from: " << syntax << endl;
-			
-			//copy syntax to output
-			//copy doc to _doc
-			*_doc = *doc;
-			//chang the lang to the other
-			_doc->set_lang(lang);
-			sfa_blocks blocks = _doc->blocks();
-			
-			// reverse process
-			for(sfa_blocks::reverse_iterator it = blocks.rbegin(); it != blocks.rend(); ++it) {
-				int bp = (*it)->ix();
-				for(sfa_maps::reverse_iterator tit = (*it)->maps().rbegin(); tit != (*it)->maps().rend(); ++tit) {
-					int pos = bp + tit->word_ix;
-					wstring signifier = tit->word;  // utf-16
-					string iid = tit->id;
-					int len = signifier.length();
-					conex::Term* term = _termControl->GetTermByIid(iid);
-					if ( term != 0 ) {
-						// begin to translate singe term
-						wstring word = _termControl->TopWord( term);
-						// wcout << L"lang on top word:" << word << endl;
-						int _len = word.length();
+		static void translateAll(QTextDocument& target, sfa_model* doc, sfa_model* _doc, conex::TermFactory* _termFactory) {
+			if (_termFactory != 0) {
+				string lang = doc->lang() == "en" ? "chs" : "en";
+				cout << "translate to :" << lang << endl;
+				conex::TermControl* _termControl = _termFactory->termControl(lang);
+				//wcout << "from: " << syntax << endl;
 
-						// replace the text		
-						QTextCursor cursor(&target);
-						cursor.setPosition(pos);
-						cursor.setPosition(pos+len, QTextCursor::KeepAnchor);
-						
-						cursor.insertText( stdWToQString( word) );
+				//copy syntax to output
+				//copy doc to _doc
+				*_doc = *doc;
+				//chang the lang to the other
+				_doc->set_lang(lang);
+				sfa_blocks blocks = _doc->blocks();
 
-						//_syntax.replace(pos, len, _text);
-						
-						/*TermRange range = *tit;
-						range.setText(L"11");
-						range.setTerm(term);*/
-						// replace termrange
-						tit->word = word;						
-						// iid is the same in general, it is not needed to modify
-						// but the term needs change from one lang to anthoer
-						tit->id = term->id()->iid();
-						// process Add chars or Remove chars
-						//cout << "length of tern range :" << tit->word.length() << endl;
-						int delt = _len - len;
-						int startpos = delt < 0 ? pos + _len : pos + len;
-						if ( delt > 0 ) {
-							(*it)->insert_before(startpos, delt);
-							_doc->insert_before(startpos, delt);
-						}else if ( delt < 0 ) {
-							(*it)->delete_befoer(startpos, -delt);
-							_doc->delete_befoer(startpos, -delt);
-						}	
-						//cout << "length of tern range :" << tit->word.length() << endl;
-						//wcout << "text of term range :" << tit->word << endl;
+				// reverse process
+				for (sfa_blocks::reverse_iterator it = blocks.rbegin(); it != blocks.rend(); ++it) {
+					int bp = (*it)->ix();
+					for (sfa_maps::reverse_iterator tit = (*it)->maps().rbegin(); tit != (*it)->maps().rend(); ++tit) {
+						int pos = bp + tit->word_ix;
+						wstring signifier = tit->word;  // utf-16
+						string iid = tit->id;
+						int len = signifier.length();
+						conex::Term* term = _termControl->GetTermByIid(iid);
+						if (term != 0) {
+							// begin to translate singe term
+							wstring word = _termControl->TopWord(term);
+							// wcout << L"lang on top word:" << word << endl;
+							int _len = word.length();
+
+							// replace the text		
+							QTextCursor cursor(&target);
+							cursor.setPosition(pos);
+							cursor.setPosition(pos + len, QTextCursor::KeepAnchor);
+
+							cursor.insertText(stdWToQString(word));
+
+							//_syntax.replace(pos, len, _text);
+
+							/*TermRange range = *tit;
+							range.setText(L"11");
+							range.setTerm(term);*/
+							// replace termrange
+							tit->word = word;
+							// iid is the same in general, it is not needed to modify
+							// but the term needs change from one lang to anthoer
+							tit->id = term->id()->iid();
+							// process Add chars or Remove chars
+							//cout << "length of tern range :" << tit->word.length() << endl;
+							int delt = _len - len;
+							int startpos = delt < 0 ? pos + _len : pos + len;
+							if (delt > 0) {
+								(*it)->insert_before(startpos, delt);
+								_doc->insert_before(startpos, delt);
+							}
+							else if (delt < 0) {
+								(*it)->delete_befoer(startpos, -delt);
+								_doc->delete_befoer(startpos, -delt);
+							}
+							//cout << "length of tern range :" << tit->word.length() << endl;
+							//wcout << "text of term range :" << tit->word << endl;
+						}
 					}
 				}
+				//wcout << "to: " << _syntax << endl;
 			}
-			//wcout << "to: " << _syntax << endl;
 		}
-	}
 	};
 }
 

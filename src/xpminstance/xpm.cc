@@ -29,7 +29,7 @@
 #include <QVector>
 
 #include "StringCovert.h"
-//#include "sdftree/sdftree.h"
+#include "sfatree/sfatree.h"
 
 namespace xpm {
 #ifdef Q_WS_MAC
@@ -1325,8 +1325,8 @@ namespace xpm {
 				QMessageBox mbox;
 				mbox.setText("Parsed sucess!");
 				mbox.exec();
-				//SDFTree tree(&s, this);
-				//tree.exec();
+				xpm::SFATree tree(&s, this);
+				tree.exec();
 			}else {
 				QMessageBox mbox;
 				char buffers[4];

@@ -57,6 +57,7 @@ SET(libxpm_Files
 	./sfatree/sfatree.cc
 	./XpmTextEdit.cc
 	./XpmCompleter.cc
+	./SignTreeModel.cc
 	${libxpm_UIS}
 	${libxpm_SRCS}
 )

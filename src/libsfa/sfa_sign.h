@@ -92,11 +92,11 @@ public:
 	int type();
 	void set_type(int type);
 	// apis
-	wstring as_string();
+	wstring aname_string();
 	void set_string(wstring string);
-	float as_number();
+	float aname_number();
 	void set_number(float number);
-	bool as_bool();
+	bool aname_bool();
 	void set_bool(bool boolvalue);
 	bool empty();
 	int size();
@@ -136,7 +136,7 @@ inline void sfa_value::clear() {
 	_string = L"";
 	_termblock.clear();
 }
-inline wstring sfa_value::as_string() {
+inline wstring sfa_value::aname_string() {
 	return _string;
 }
 inline void sfa_value::set_string(wstring str) {
@@ -144,7 +144,7 @@ inline void sfa_value::set_string(wstring str) {
 	_termblock.clear();
 	_type = SFA_STRING;
 }
-inline float sfa_value::as_number() {
+inline float sfa_value::aname_number() {
 	return _number;
 }
 inline void sfa_value::set_number(float num) {
@@ -152,7 +152,7 @@ inline void sfa_value::set_number(float num) {
 	_termblock.clear();
 	_type = SFA_NUMBER;
 }
-inline bool sfa_value::as_bool() {
+inline bool sfa_value::aname_bool() {
 	return _type == SFA_TRUE ? true : false;
 }
 inline void sfa_value::set_bool(bool boolvalue) {
@@ -263,33 +263,33 @@ public:
 	void set_type(int type);
 	// common iterator apis		
 
-	// denotation apis
-	sfa_sign::name_iterator name_begin();
-	sfa_sign::name_iterator name_end();
+	// name apis
+	sfa_sign::name_iterator name_signs_begin();
+	sfa_sign::name_iterator name_signs_end();
 	wstring name_str() const;
 	void set_name_str(wstring name_str);
-	int name_size();
+	int name_signs_size();
 	bool name_empty();
 	void name_clear();
 	void name_append_literals(wstring literals);
 	void name_append_atom_sign(wstring signifier, string signified);
 	void name_append_map(int pos, wstring signifier, string signified);
-	// reification apis
-	sfa_sign::value_iterator value_begin();
-	sfa_sign::value_iterator value_end();
+	// value apis
+	sfa_sign::value_iterator value_signs_begin();
+	sfa_sign::value_iterator value_signs_end();
 	wstring value_as_string();
 	void set_value_string(wstring str);
 	float value_as_number();
 	void set_value_number(float num);
 	bool value_as_bool();
 	void set_value_bool(bool bl);
-	int value_size();
+	int value_signs_size();
 	bool value_empty();
 	void value_clear();
 	void value_append_literals(wstring literals);
 	void value_append_atom_sign(wstring signifier, string signified);
 	void value_append_map(int pos, wstring signifier, string signified);
-	// connotation apis		
+	// array or children apis		
 	sfa_sign::iterator begin();
 	sfa_sign::iterator end();
 	void push_back(sfa_sign* sign);
@@ -297,18 +297,18 @@ public:
 	bool empty();
 	void clear();
 	sfa_sign* at(int index);
-	// to parse apis in syntax s
-	int s_start();
-	int s_end();
-	int s_size();
-	void set_s_start(int start);
-	void set_s_end(int end);
-	// for values
-	int v_start();
-	int v_end();
-	int v_size();
-	void set_v_start(int start);
-	void set_v_end(int end);
+	// to parse apis of name
+	int name_start();
+	int name_last();
+	int name_size();
+	void set_name_start(int start);
+	void set_name_last(int end);
+	// for parse apis of values
+	int value_start();
+	int value_last();
+	int value_size();
+	void set_value_start(int start);
+	void set_value_last(int end);
 	// for parent link and childen
 	sfa_sign* parent();
 	sfa_sign* next();
@@ -318,11 +318,11 @@ private:
 	int _type;
 	// for syntax parse
 	// for key
-	int _s_start;
-	int _s_end;
+	int _name_start;
+	int _name_last;
 	// for value
-	int _v_start;
-	int _v_end;
+	int _value_start;
+	int _value_last;
 	// parent link
 	sfa_sign* _parent;
 	// next link
@@ -344,49 +344,49 @@ inline void sfa_sign::set_parent(sfa_sign* parent) {
 	_parent = parent;
 }
 // for key
-inline int sfa_sign::s_start() {
-	return _s_start;
+inline int sfa_sign::name_start() {
+	return _name_start;
 }
-inline int sfa_sign::s_end() {
-	return _s_end;
+inline int sfa_sign::name_last() {
+	return _name_last;
 }
-inline int sfa_sign::s_size() {
-	return _s_end - _s_start;
+inline int sfa_sign::name_size() {
+	return _name_last - _name_start;
 }
-inline void sfa_sign::set_s_start(int start) {
-	_s_start = start;
+inline void sfa_sign::set_name_start(int start) {
+	_name_start = start;
 }
-inline void sfa_sign::set_s_end(int end) {
-	_s_end = end;
+inline void sfa_sign::set_name_last(int end) {
+	_name_last = end;
 }
 // for value
-inline int sfa_sign::v_start() {
-	return _v_start;
+inline int sfa_sign::value_start() {
+	return _value_start;
 }
-inline int sfa_sign::v_end() {
-	return _v_end;
+inline int sfa_sign::value_last() {
+	return _value_last;
 }
-inline int sfa_sign::v_size() {
-	return _v_end - _v_start;
+inline int sfa_sign::value_size() {
+	return _value_last - _value_start;
 }
-inline void sfa_sign::set_v_start(int start) {
-	_v_start = start;
+inline void sfa_sign::set_value_start(int start) {
+	_value_start = start;
 }
-inline void sfa_sign::set_v_end(int end) {
-	_v_end = end;
+inline void sfa_sign::set_value_last(int end) {
+	_value_last = end;
 }
 
 // common iterator apis
-inline sfa_sign::name_iterator sfa_sign::name_begin() {
+inline sfa_sign::name_iterator sfa_sign::name_signs_begin() {
 	return _name.begin();
 }
-inline sfa_sign::name_iterator sfa_sign::name_end() {
+inline sfa_sign::name_iterator sfa_sign::name_signs_end() {
 	return _name.end();
 }
-inline sfa_sign::value_iterator sfa_sign::value_begin() {
+inline sfa_sign::value_iterator sfa_sign::value_signs_begin() {
 	return _value.begin();
 }
-inline sfa_sign::value_iterator sfa_sign::value_end() {
+inline sfa_sign::value_iterator sfa_sign::value_signs_end() {
 	return _value.end();
 }
 inline sfa_sign::iterator sfa_sign::begin() {
@@ -402,7 +402,7 @@ inline wstring sfa_sign::name_str() const{
 inline void sfa_sign::set_name_str(wstring name_str) {
 	_name.set_name_str(name_str);
 }
-inline int sfa_sign::name_size() {
+inline int sfa_sign::name_signs_size() {
 	return _name.size();
 }
 inline bool sfa_sign::name_empty() {
@@ -419,30 +419,30 @@ inline void sfa_sign::name_append_atom_sign(wstring signifier, string signified)
 }
 inline void sfa_sign::name_append_map(int pos, wstring signifier, string signified) {
 	// covert to denotation position
-	pos -= _s_start;
+	pos -= _name_start;
 	if (_name.name_str().substr(pos, signifier.length()) == signifier)
 		_name.append_map(pos, signifier, signified);
 }
 // reification apis
 inline wstring sfa_sign::value_as_string() {
-	return _value.as_string();
+	return _value.aname_string();
 }
 inline void sfa_sign::set_value_string(wstring str) {
 	_value.set_string(str);
 }
 inline float sfa_sign::value_as_number() {
-	return _value.as_number();
+	return _value.aname_number();
 }
 inline void sfa_sign::set_value_number(float num) {
 	_value.set_number(num);
 }
 inline bool sfa_sign::value_as_bool() {
-	return _value.as_bool();
+	return _value.aname_bool();
 }
 inline void sfa_sign::set_value_bool(bool bl) {
 	_value.set_bool(bl);
 }
-inline int sfa_sign::value_size() {
+inline int sfa_sign::value_signs_size() {
 	return _value.size();
 }
 inline bool sfa_sign::value_empty() {
@@ -459,8 +459,8 @@ inline void sfa_sign::value_append_atom_sign(wstring signifier, string signified
 }
 inline void sfa_sign::value_append_map(int pos, wstring signifier, string signified) {
 	// covert to reification position
-	pos -= _v_start;
-	if (_type == SFA_STRING && _value.as_string().substr(pos, signifier.length()) == signifier)
+	pos -= _value_start;
+	if (_type == SFA_STRING && _value.aname_string().substr(pos, signifier.length()) == signifier)
 		_value.append_map(pos, signifier, signified);
 }
 // connotation apis		

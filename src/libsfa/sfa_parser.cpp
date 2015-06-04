@@ -18,7 +18,7 @@ int sfa_parser::parse(const wstring& syntax, sfa_model& doc, sfa_sign& root) {
 				/* is string reification if the last token is NULL or ARRAY*/
 				token = _toklast;
 				token->set_type(type);
-				token->set_v_start(_pos);
+				token->set_value_start(_pos);
 			}
 			else {
 				/* is the key if the type of last token is Object, NUMBER, BOOL*/
@@ -28,7 +28,7 @@ int sfa_parser::parse(const wstring& syntax, sfa_model& doc, sfa_sign& root) {
 				if (_toksuper != 0) {
 					_toksuper->push_back(token);
 				}
-				token->set_v_start(_pos);
+				token->set_value_start(_pos);
 			}
 			_toksuper = _toklast;
 			break;
@@ -37,11 +37,11 @@ int sfa_parser::parse(const wstring& syntax, sfa_model& doc, sfa_sign& root) {
 			token = _toklast;
 			// so this is a loop
 			for (;;) {
-				if (token->v_start() != -1 && token->v_end() == -1) {
+				if (token->value_start() != -1 && token->value_last() == -1) {
 					if (token->type() != type) {
 						return SFA_ERROR_INVAL;
 					}
-					token->set_v_end(_pos + 1);
+					token->set_value_last(_pos + 1);
 					_toksuper = token->parent();
 					break;
 				}
@@ -94,19 +94,19 @@ int sfa_parser::parse_string(const wstring& syntax) {
 		/* Quote: end of string */
 		if (c == '\"') {
 			if (_toklast->type() == SFA_EMPTY) {
-				/* is string reification if the last token is NULL or ARRAY*/
+				/* is string value if the last token is NULL or ARRAY*/
 				token = _toklast;
 				token->set_type(SFA_STRING);
-				token->set_v_start(start + 1);
-				token->set_v_end(_pos);
+				token->set_value_start(start + 1);
+				token->set_value_last(_pos);
 				token->set_value_string(syntax.substr(start + 1, _pos - start - 1));
 			}
 			else {
-				/* is the key if the type of last token is Object, NUMBER, BOOL*/
+				/* is the name if the type of last token is Object, NUMBER, BOOL*/
 				_count++;
 				token = new sfa_sign(SFA_EMPTY);
-				token->set_s_start(start + 1);
-				token->set_s_end(_pos);
+				token->set_name_start(start + 1);
+				token->set_name_last(_pos);
 				token->set_name_str(syntax.substr(start + 1, _pos - start - 1));
 				_toksuper->push_back(token);
 				_toklast = token;
@@ -174,14 +174,14 @@ int sfa_parser::parse_primitive(const wstring& syntax) {
 			if (_toklast->type() == SFA_EMPTY && type != SFA_EMPTY) {
 				token = _toklast;
 				token->set_type(type);
-				token->set_v_start(start);
-				token->set_v_end(_pos);
+				token->set_value_start(start);
+				token->set_value_last(_pos);
 			}
 			else {
 				++_count;
 				token = new sfa_sign(type);
-				token->set_v_start(start);
-				token->set_v_end(_pos);
+				token->set_value_start(start);
+				token->set_value_last(_pos);
 				_toksuper->push_back(token);
 				_toklast = token;
 			}
@@ -206,16 +206,16 @@ int sfa_parser::parse_atom_signs(sfa_model& doc, sfa_sign& r) {
 	/* Check the error of the whole signs*/
 	sfa_sign* token = r.next_start();
 	while (token != 0) {
-		if (token->v_start() != -1 && token->v_end() == -1) {
+		if (token->value_start() != -1 && token->value_last() == -1) {
 			return SFA_ERROR_PART_STRING;
 		}
-		if (token->s_start() != -1 && token->s_end() == -1) {
+		if (token->name_start() != -1 && token->name_last() == -1) {
 			return SFA_ERROR_PART_OBJECT_ARRAY;
 		}
 		if (token->name_str().size() > 0) {
-			// process in denotation
-			int start = token->s_start();
-			int len = token->s_end() - start;
+			// process in name
+			int start = token->name_start();
+			int len = token->name_last() - start;
 			vector<sfa_map> trs = doc.find_maps(start, len);
 			for (vector<sfa_map>::iterator it = trs.begin(); it != trs.end(); ++it) {
 				token->name_append_map(it->word_ix, it->word, it->id);
@@ -223,9 +223,9 @@ int sfa_parser::parse_atom_signs(sfa_model& doc, sfa_sign& r) {
 			// needs to evaluate all words mapping in future
 		}
 		if (token->type() == SFA_STRING && token->value_as_string().size() > 0) {
-			// process in reification
-			int start = token->v_start();
-			int len = token->v_end() - start;
+			// process in value
+			int start = token->value_start();
+			int len = token->value_last() - start;
 			vector<sfa_map> trs = doc.find_maps(start, len);
 			for (vector<sfa_map>::iterator it = trs.begin(); it != trs.end(); ++it) {
 				token->value_append_map(it->word_ix, it->word, it->id);
