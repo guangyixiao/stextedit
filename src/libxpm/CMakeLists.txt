@@ -58,6 +58,7 @@ SET(libxpm_Files
 	./XpmTextEdit.cc
 	./XpmCompleter.cc
 	./SignTreeModel.cc
+	./TableParser.cc
 	${libxpm_UIS}
 	${libxpm_SRCS}
 )
