@@ -14,6 +14,7 @@ FIND_PACKAGE(Qt5Widgets REQUIRED)
 
 #add the files to our groups and app
 SOURCE_GROUP("mapedit" ./mapedit/*)
+SOURCE_GROUP("sfatree" ./sfatree/*)
 #seems to be a bug in cmake, can't put these in analysis\\standard folder :(
 #upper detail
 
@@ -34,7 +35,8 @@ QT5_ADD_RESOURCES(libxpm_SRCS
 					  
 QT5_WRAP_UI(libxpm_UIS ./mapedit/mapeditor.ui
                       ./mapedit/addmap.ui
-					  ./mapedit/removemap.ui)
+					  ./mapedit/removemap.ui
+					  ./sfatree/sfatree.ui)
 					  
 #QT4_WARP_UI
 
@@ -52,6 +54,7 @@ SET(libxpm_Files
 	./mapedit/BlockTreeItem.cc
 	./mapedit/TermTreeItem.cc
 	./mapedit/XpmLineEdit.cc
+	./sfatree/sfatree.cc
 	./XpmTextEdit.cc
 	./XpmCompleter.cc
 	${libxpm_UIS}
