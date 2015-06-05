@@ -13,6 +13,7 @@
 //#include "control/XpmTermDocControl.h"
 #include "XpmTableDocControl.h"
 #include "sfa_parser.h"
+#include "TableParser.h"
 
     QT_FORWARD_DECLARE_CLASS(QAction)
 	QT_FORWARD_DECLARE_CLASS(QComboBox)
@@ -164,6 +165,7 @@ namespace xpm {
 		conex::TermFactory _termFactory;
 		//XpmDocTranslator _translator;
 		sfa_parser _signparser;
+		TableParser _tableparser;
 		QTextCharFormat _highlightFormat;
 		QTextCharFormat _dishighlightFormat;
 	};

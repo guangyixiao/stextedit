@@ -1320,6 +1320,10 @@ namespace xpm {
 			sfa_sign s(SFA_OBJECT) ;
 			//int err = _signparser.parse(syntax, xpmControl->xpmdoc(), s);
 			int err = _signparser.parse(syntax, *xpmControl->model(), s);
+			if (err <= 0) {
+				s.clear();
+				err = _tableparser.parse(textEdit->document(), *xpmControl->model(), s);
+			}
 			// outcontrol will save its xpmdoc in the out_file
 			if ( err > 0) {
 				QMessageBox mbox;

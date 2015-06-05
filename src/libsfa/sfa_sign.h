@@ -43,11 +43,16 @@ private:
 };
 
 inline sfa_arr::~sfa_arr() {
+	clear();
+}
+
+inline void sfa_arr::clear() {
 	for (vector<sfa_sign*>::iterator i = _items.begin(); i != _items.end(); ++i){
 		delete *i;
 		*i = 0;
 	}
 	_items.clear();
+
 }
 
 inline int sfa_arr::type() {

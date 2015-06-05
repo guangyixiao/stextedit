@@ -9,6 +9,9 @@
 namespace xpm {
 
 	int TableParser::parse(QTextDocument* doc, sfa_model& model, sfa_sign& root) {
+		_count = 0;
+		_toksuper = &root;
+		_toklast = 0;
 		QTextBlock b = doc->begin();
 		QTextTable* t = 0;
 		while (b.isValid()) {
@@ -34,22 +37,27 @@ namespace xpm {
 		int cols = t->columns();
 		if (cols != 3)
 			return -1;
+		int result = 0;
 		// add a new root object
 		map<wstring, sfa_sign*> objects;
-		_toksuper = &r;
-		_toklast = 0;
+		sfa_sign* token = 0;
 		for (int i = 0; i < rows; ++i){
 			QTextBlock b1 = t->cellAt(i, 0).firstCursorPosition().block();
 			wstring text1 = b1.text().toStdWString();
+			QTextBlock b2 = t->cellAt(i, 0).firstCursorPosition().block();
+			wstring text2 = b2.text().toStdWString();
+			QTextBlock b3 = t->cellAt(i, 0).firstCursorPosition().block();
+			wstring text3 = b3.text().toStdWString();
 			// precondition of text1 is empty
 			if (text1.empty()){
 				if (_toklast == 0)
-					break;
+					return -1;
 			}
 			// precondition of find the object in cache
 			else if (objects.find(text1) != objects.end()){
 				_toklast = objects[text1];
 				_toklast->set_type(SFA_OBJECT);
+				_toksuper = _toklast;
 			}
 			// precondition of toally new object
 			else {
@@ -57,53 +65,72 @@ namespace xpm {
 				_toksuper->push_back(_toklast);
 				_toksuper = _toklast;
 			}
-			QTextBlock b2 = t->cellAt(i, 0).firstCursorPosition().block();
-			wstring text2 = b2.text().toStdWString();
+			
 			//precondition of instance of a type
 			if (text2.empty()){
 				if (!text1.empty())
 					return -1;
+				if (text3.empty())
+					return 0;
+			}else{
 				// precondition of a member of a array
-				else {
-					if (i > 1 && !t->cellAt(i - 1, 1).firstCursorPosition().block().text().isEmpty()){
-						_toksuper = _toklast;
-						_toklast = new sfa_sign(*_toksuper);
-						_toksuper->push_back(_toklast);
-						_toksuper->set_type(SFA_ARRAY);
-						_toklast->name_clear();
-					}
+				if (i < rows && t->cellAt(i + 1, 1).firstCursorPosition().block().text().isEmpty()
+					&& !t->cellAt(i + 1, 2).firstCursorPosition().block().text().isEmpty()){
+					++_count;
+					token = new sfa_sign(SFA_ARRAY);
+					token->set_value_start(b2.position());
+					token->set_value_last(b2.position() + b2.length());
+					token->set_name_str(text2);
+					_toksuper->push_back(token);
+					_toklast = token;
+				}
+				else{
+					++_count;
+					token = new sfa_sign(SFA_EMPTY);
+					token->set_name_start(b2.position());
+					token->set_name_last(b2.position() + b2.length());
+					token->set_name_str(text2);
+					_toksuper->push_back(token);
+					_toklast = token;					
 				}
 			}
-			// precondition of a new name, value pair of a object
-			else {
-				_toklast = new sfa_sign(SFA_EMPTY);
-				_toklast->set_name_str(text2);
-				_toklast->set_name_start(b2.position());
-				_toklast->set_name_last(b2.position() + b2.length());
-			}			
-
-			QTextBlock b3 = t->cellAt(i, 0).firstCursorPosition().block();
-			wstring text3 = b3.text().toStdWString();
+						
 			if (text3.empty()) {
-				if (text2.empty())
-					break;
-				else
-					return -1;
+				return -1;
 			}
 			else {
 				_pos = 0;
 				for (; _pos < text3.size(); ++_pos){
 					wchar_t c = text3[_pos];
 					switch (c){
-						case 
+					case '\t': case '\r': case '\n': case ' ':
+						break;
+					case '-': case '0': case '1': case '2': case '3': case '4':
+					case '5': case '6': case '7': case '8': case '9':
+						result = parse_primitive(text3);
+						if (result < 0) return result;
+						break;
+					default:
+						/* is the name if the type of last token is Object, NUMBER, BOOL*/
+						if (_toklast->type() == SFA_EMPTY){
+							_toklast->set_type(SFA_STRING);
+							_toklast->set_value_start(b3.position());
+							_toklast->set_value_last(b3.position()+b3.length());
+							_toklast->set_value_string(text3);
+						}
+						else {
+							++_count;
+							token = new sfa_sign(SFA_STRING);
+							token->set_value_start(b3.position());
+							token->set_value_last(b3.position()+b3.length());
+							token->set_value_string(text3);
+							_toksuper->push_back(token);
+							_toklast = token;
+						}						
+						objects[text3] = _toklast;
 					}
 				}
-			}
-			//precondition of string			
-			//precondition of bool
-			//precondition of null
-			//precondition of number
-			//precondition of object
+			}			
 		}
 		sfa_parser parser;
 		return parser.parse_atom_signs(model, r);
@@ -154,121 +181,33 @@ namespace xpm {
 
 	}
 
-	int TableParser::parse_string(const wstring& syntax) {
-		sfa_sign *token;
-		int start = _pos;
-		++_pos;
-		for (; _pos < syntax.size(); ++_pos) {
-			wchar_t c = syntax[_pos];
-
-			/* Quote: end of string */
-			if (c == '\"') {
-				if (_toklast->type() == SFA_EMPTY) {
-					/* is string value if the last token is NULL or ARRAY*/
-					token = _toklast;
-					token->set_type(SFA_STRING);
-					token->set_value_start(start + 1);
-					token->set_value_last(_pos);
-					token->set_value_string(syntax.substr(start + 1, _pos - start - 1));
-				}
-				else {
-					/* is the name if the type of last token is Object, NUMBER, BOOL*/
-					_count++;
-					token = new sfa_sign(SFA_EMPTY);
-					token->set_name_start(start + 1);
-					token->set_name_last(_pos);
-					token->set_name_str(syntax.substr(start + 1, _pos - start - 1));
-					_toksuper->push_back(token);
-					_toklast = token;
-				}
-				return 0;
-			}
-
-			/* Backslash: Quoted symbol expected */
-			if (c == '\\') {
-				++_pos;
-				switch (syntax[_pos]) {
-					/* Allowed escaped symbols */
-				case '\"': case '/': case '\\': case 'b':
-				case 'f': case 'r': case 'n': case 't':
-					break;
-					/* Allows escaped symbol \uXXXX */
-				case 'u':
-					++_pos;
-					for (int i = 0; i < 4 && syntax[_pos] != '\0'; ++i) {
-						/* If it isn't a hex character we have an error */
-						if (!((syntax[_pos] >= 48 && syntax[_pos] <= 57) || /* 0-9 */
-							(syntax[_pos] >= 65 && syntax[_pos] <= 70) || /* A-F */
-							(syntax[_pos] >= 97 && syntax[_pos] <= 102))) { /* a-f */
-							_pos = start;
-							return SFA_ERROR_INVAL;
-						}
-						++_pos;
-					}
-					--_pos;
-					break;
-					/* Unexpected symbol */
-				default:
-					_pos = start;
-					return SFA_ERROR_INVAL;
-
-				}
-			}
-		}
-		_pos = start;
-		return SFA_ERROR_PART_STRING;
-	}
 	int TableParser::parse_primitive(const wstring& syntax) {
 		sfa_sign *token;
 		int start = _pos;
 		int type = SFA_NUMBER;
 		for (; _pos < syntax.size(); ++_pos) {
-			wchar_t c = syntax[_pos];
-			switch (c) {
-			case 't':
-				if (syntax.substr(_pos, 4) == L"true")
-					type = SFA_TRUE;
-				break;
-			case 'f':
-				if (syntax.substr(_pos, 5) == L"false")
-					type = SFA_FALSE;
-				break;
-			case 'n':
-				if (syntax.substr(_pos, 4) == L"null")
-					type = SFA_NULL;
-				break;
-			case ':':
-			case '\t': case '\r': case '\n': case ' ':
-			case ',': case ']': case '}':
-				/* found */
-				if (_toklast->type() == SFA_EMPTY && type != SFA_EMPTY) {
-					token = _toklast;
-					token->set_type(type);
-					token->set_value_start(start);
-					token->set_value_last(_pos);
-				}
-				else {
-					++_count;
-					token = new sfa_sign(type);
-					token->set_value_start(start);
-					token->set_value_last(_pos);
-					_toksuper->push_back(token);
-					_toklast = token;
-				}
-				if (type == SFA_NUMBER) {
-					token->set_value_number(_wtof(syntax.substr(start, _pos - start).c_str()));
-				}
-				_pos--;
-				return 0;
-				break;
-			}
 			if (syntax[_pos] < 32 || syntax[_pos] >= 127) {
-				_pos = start;
 				return SFA_ERROR_INVAL;
-			}
+			}			
 		}
-		/* In strict mode primitive must be followed by a comma/object/array */
-		_pos = start;
-		return SFA_ERROR_PART_PRIMITIVE;
+		/* found */
+		if (_toklast->type() == SFA_EMPTY) {
+			token = _toklast;
+			token->set_type(type);
+			token->set_value_start(start);
+			token->set_value_last(_pos);
+		}
+		else {
+			++_count;
+			token = new sfa_sign(type);
+			token->set_value_start(start);
+			token->set_value_last(_pos);
+			_toksuper->push_back(token);
+			_toklast = token;
+		}
+		if (type == SFA_NUMBER) {
+			token->set_value_number(_wtof(syntax.substr(start, _pos - start).c_str()));
+		}
+		return 1;		
 	}
 }
