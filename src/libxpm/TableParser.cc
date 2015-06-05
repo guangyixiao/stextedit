@@ -12,13 +12,14 @@ namespace xpm {
 		_count = 0;
 		_toksuper = &root;
 		_toklast = 0;
+		_objects.clear();
 		QTextBlock b = doc->begin();
 		QTextTable* t = 0;
 		while (b.isValid()) {
 			QTextCursor c(b);
-			QTextTable* t2 = c.currentTable();
-			if (t2 && t2 != t) {
-				t = t2;
+			QTextTable* t1 = c.currentTable();
+			if (t1 && t1 != t) {
+				t = t1;
 				QTextBlock b1 = t->cellAt(0, 0).firstCursorPosition().block();
 				wstring cell1 = b1.text().toStdWString();
 				// context with id: 0x5107df009291
@@ -39,14 +40,13 @@ namespace xpm {
 			return -1;
 		int result = 0;
 		// add a new root object
-		map<wstring, sfa_sign*> objects;
 		sfa_sign* token = 0;
-		for (int i = 0; i < rows; ++i){
+		for (int i = 1; i < rows; ++i){
 			QTextBlock b1 = t->cellAt(i, 0).firstCursorPosition().block();
 			wstring text1 = b1.text().toStdWString();
-			QTextBlock b2 = t->cellAt(i, 0).firstCursorPosition().block();
+			QTextBlock b2 = t->cellAt(i, 1).firstCursorPosition().block();
 			wstring text2 = b2.text().toStdWString();
-			QTextBlock b3 = t->cellAt(i, 0).firstCursorPosition().block();
+			QTextBlock b3 = t->cellAt(i, 2).firstCursorPosition().block();
 			wstring text3 = b3.text().toStdWString();
 			// precondition of text1 is empty
 			if (text1.empty()){
@@ -54,15 +54,21 @@ namespace xpm {
 					return -1;
 			}
 			// precondition of find the object in cache
-			else if (objects.find(text1) != objects.end()){
-				_toklast = objects[text1];
+			else if (_objects.find(text1) != _objects.end()){
+				_toklast = _objects[text1];
 				_toklast->set_type(SFA_OBJECT);
 				_toksuper = _toklast;
 			}
 			// precondition of toally new object
 			else {
-				_toklast = new sfa_sign(SFA_OBJECT);
-				_toksuper->push_back(_toklast);
+				++_count;
+				token = new sfa_sign(SFA_OBJECT);
+				token->set_name_start(b1.position());
+				token->set_name_last(b1.position() + b1.length());
+				token->set_name_str(text1);
+				_objects[text1] = token;
+				_toksuper->push_back(token);
+				_toklast = token;
 				_toksuper = _toklast;
 			}
 			
@@ -78,13 +84,18 @@ namespace xpm {
 					&& !t->cellAt(i + 1, 2).firstCursorPosition().block().text().isEmpty()){
 					++_count;
 					token = new sfa_sign(SFA_ARRAY);
-					token->set_value_start(b2.position());
-					token->set_value_last(b2.position() + b2.length());
+					token->set_name_start(b2.position());
+					token->set_name_last(b2.position() + b2.length());
 					token->set_name_str(text2);
 					_toksuper->push_back(token);
 					_toklast = token;
+					_toksuper = _toklast;
 				}
 				else{
+					if (_toksuper->type() == SFA_ARRAY) {
+						_toksuper = _toksuper->parent();
+						_toklast = _toksuper;
+					}
 					++_count;
 					token = new sfa_sign(SFA_EMPTY);
 					token->set_name_start(b2.position());
@@ -99,47 +110,49 @@ namespace xpm {
 				return -1;
 			}
 			else {
-				_pos = 0;
-				for (; _pos < text3.size(); ++_pos){
-					wchar_t c = text3[_pos];
-					switch (c){
-					case '\t': case '\r': case '\n': case ' ':
-						break;
-					case '-': case '0': case '1': case '2': case '3': case '4':
-					case '5': case '6': case '7': case '8': case '9':
-						result = parse_primitive(text3);
-						if (result < 0) return result;
-						break;
-					default:
-						/* is the name if the type of last token is Object, NUMBER, BOOL*/
-						if (_toklast->type() == SFA_EMPTY){
-							_toklast->set_type(SFA_STRING);
-							_toklast->set_value_start(b3.position());
-							_toklast->set_value_last(b3.position()+b3.length());
-							_toklast->set_value_string(text3);
-						}
-						else {
-							++_count;
-							token = new sfa_sign(SFA_STRING);
-							token->set_value_start(b3.position());
-							token->set_value_last(b3.position()+b3.length());
-							token->set_value_string(text3);
-							_toksuper->push_back(token);
-							_toklast = token;
-						}						
-						objects[text3] = _toklast;
-					}
-				}
+				result = parse_value(text3, b3.position(), b3.length());
 			}			
 		}
 		sfa_parser parser;
 		return parser.parse_atom_signs(model, r);
 	}
 
+	int TableParser::parse_value(wstring text3, int pos, int len){
+		sfa_sign* token = 0;
+		_pos = 0;
+		for (; _pos < text3.size(); ++_pos){
+			wchar_t c = text3[_pos];
+			switch (c){
+			case '\t': case '\r': case '\n': case ' ':
+				continue;
+			case '-': case '0': case '1': case '2': case '3': case '4':
+			case '5': case '6': case '7': case '8': case '9':
+				return parse_primitive(text3);
+			default:
+				/* is the name if the type of last token is Object, NUMBER, BOOL*/
+				if (_toklast->type() == SFA_EMPTY){
+					_toklast->set_type(SFA_STRING);
+					_toklast->set_value_start(pos);
+					_toklast->set_value_last(pos + len);
+					_toklast->set_value_string(text3);
+				}
+				else {
+					++_count;
+					token = new sfa_sign(SFA_STRING);
+					token->set_value_start(pos);
+					token->set_value_last(pos + len);
+					token->set_value_string(text3);
+					_toksuper->push_back(token);
+					_toklast = token;
+				}
+				_objects[text3] = _toklast;
+				return 1;
+			}
+		}
+	}
+
 	int TableParser::contain_iid(QTextBlock& b, sfa_model& m, string iid) {
 		vector<sfa_map> maps = m.find_maps(b.position(), b.length());
-		if (maps.size() == 0)
-			return 0;
 		for (vector<sfa_map>::iterator i = maps.begin(); i != maps.end(); ++i){
 			if (i->id == iid)
 				return 1;

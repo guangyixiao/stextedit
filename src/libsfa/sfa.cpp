@@ -312,7 +312,7 @@ vector<sfa_map> sfa_model::find_maps(int pos, int len) {
 			int ilen = len;
 			if( ipos <= (*i)->ix()) {
 				ipos = 0;
-				ilen = ipos + ilen -(*i)->ix();
+				ilen = pos + len -(*i)->ix();
 			}else
 				ipos -= (*i)->ix();
 			for(sfa_maps::iterator j = (*i)->maps().begin(); j != (*i)->maps().end(); ++j) {

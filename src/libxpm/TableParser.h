@@ -17,6 +17,7 @@ namespace xpm {
 	public:
 		TableParser():_count(0),_pos(0),_toksuper(0),_toklast(0) {}
 		int parse(QTextDocument* doc, sfa_model& model, sfa_sign& r);	
+		int parse_value(wstring text3, int pos, int len);
 		// 1 as found, 0 as not found
 		int contain_iid(QTextBlock& b, sfa_model& m, string iid);
 		// 1 as exactly match, 2 as partly match, 0 as no match
@@ -32,6 +33,7 @@ namespace xpm {
 		unsigned int _pos;
 		sfa_sign* _toksuper;
 		sfa_sign* _toklast;
+		map<wstring, sfa_sign*> _objects;
 	};
 
 	
