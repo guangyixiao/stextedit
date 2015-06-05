@@ -7,12 +7,14 @@
 #include <QKeyEvent>
 #include <QAbstractItemView>
 #include <QCompleter>
+#include <QClipboard>
 #include <QtDebug>
 #include <QApplication>
 #include <QModelIndex>
 #include <QAbstractItemModel>
 #include <QScrollBar>
 #include <QModelIndex>
+#include <QMenu>
 #include <QToolTip>
 #include <QTime>
 #include <QString>
@@ -47,6 +49,9 @@ namespace xpm {
 			//for complement
 			setCompleter();
 			setAttribute(Qt::WA_InputMethodEnabled, true);
+			// construct the iid copy action
+			_copyiid = new QAction(tr("copy iid"), this);
+			connect(_copyiid, SIGNAL(triggered()), this, SLOT(copyIid()));
 	}
 	XpmTextEdit::~XpmTextEdit() {
 		if(_c) {
@@ -382,5 +387,24 @@ namespace xpm {
 
 	QVariant XpmTextEdit::inputMethodQuery( Qt::InputMethodQuery property ) const {
 		return QTextEdit::inputMethodQuery(property);
+	}
+
+	void XpmTextEdit::contextMenuEvent(QContextMenuEvent* e) {
+		QMenu *menu = createStandardContextMenu();
+		QTextCursor cursor = cursorForPosition(e->pos());
+		//TermRange termRange = _xpmdoc.GetXpmTermDoc().GetTermRangeFromPos(cursor.position());
+		sfa_map* map = _xpmControl->current_map(cursor.position());
+		if (map && map->id.length() > 0) {
+			menu->addSeparator();
+			menu->addAction(_copyiid);
+			_iid = map->id;
+		}		
+		menu->exec(e->globalPos());
+		delete menu;
+	}
+
+	void XpmTextEdit::copyIid() {
+		QClipboard* clipboard = QApplication::clipboard();
+		clipboard->setText(QString::fromStdString (_iid));
 	}
 }

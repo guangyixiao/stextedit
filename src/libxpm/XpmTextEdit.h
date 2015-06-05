@@ -32,6 +32,7 @@ namespace xpm {
 		void updateCompleter();
 		void clear();
 	    void formatMaps();
+		
 	protected:
 		virtual void keyPressEvent( QKeyEvent *e);
 		virtual void focusInEvent(QFocusEvent *e);
@@ -43,9 +44,12 @@ namespace xpm {
 		// override input method
 		virtual void inputMethodEvent(QInputMethodEvent *e);
 		virtual QVariant inputMethodQuery ( Qt::InputMethodQuery property ) const;
+		// override context menu event
+		void contextMenuEvent(QContextMenuEvent* e);
 	private slots:
 		void insertTerm(conex::Term* term);
 		void termsChange(int position, int charsRemoved, int charsAdded);
+		void copyIid();
     signals:
 		void refreshMap();
 	public:
@@ -65,6 +69,9 @@ namespace xpm {
 		int _blockPosition;
 		int _startPos;	
 		int _endPos;
+		// find a iid
+		string _iid;
+		QAction* _copyiid;
 	};
 
 	/*inline XpmClipboard& XpmTextEdit::xpmclipboard() {
