@@ -22,10 +22,10 @@ public:
 	// two input with syntax and doc, one output with sfa_sign
 	int parse(const wstring& syntax, sfa_model& doc, sfa_sign& r);
 	void clear();
+	int parse_atom_signs(sfa_model& doc, sfa_sign& r);
 private:
 	int parse_string(const wstring& syntax);
-	int parse_primitive(const wstring& syntax);
-	int parse_atom_signs(sfa_model& doc, sfa_sign& r);
+	int parse_primitive(const wstring& syntax);	
 	int _count;
 	unsigned int _pos;
 	sfa_sign* _toksuper;
