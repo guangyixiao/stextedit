@@ -10,8 +10,8 @@
 #include "mapedit/mapeditor.h"
 //#include "XpmTermDocControl.h"
 #include "XpmTableDocControl.h"
-//#include "XpmDocTranslator.h"
-//#include "SDFSignControl.h"
+#include "sfa_parser.h"
+#include "TableParser.h"
 
 QT_FORWARD_DECLARE_CLASS(QAction)
 QT_FORWARD_DECLARE_CLASS(QComboBox)
@@ -157,8 +157,8 @@ namespace xpm {
 
 		XpmTableDocControl *xpmControl;		
 		conex::TermFactory _termFactory;
-//		XpmDocTranslator _translator;
-//		SDFSignControl _signparser;
+		sfa_parser _signparser;
+		TableParser _tableparser;
 		QTextCharFormat _highlightFormat;
 		QTextCharFormat _dishighlightFormat;
 	};

@@ -77,9 +77,10 @@ namespace xpm {
 	}
 
 	QVariant SignTreeModel::type2value(int type, sfa_sign* item) const {
+		QString str = StringCovert::stdWToQString(item->value_as_string());
 		switch (type) {
 		case SFA_STRING:
-			return StringCovert::stdWToQString(item->value_as_string());
+			return str;
 		case SFA_NUMBER:
 			return QString::number(item->value_as_number());
 		case SFA_TRUE:
@@ -88,8 +89,11 @@ namespace xpm {
 			return tr("false");
 		case SFA_NULL:
 			return tr("null");
-		case SFA_OBJECT:
-			return QString::number(item->size());
+		case SFA_OBJECT:			
+			if (str.isEmpty())
+				return QString::number(item->size());
+			else
+				return str;
 		case SFA_ARRAY:
 			return QString::number(item->size());
 		}

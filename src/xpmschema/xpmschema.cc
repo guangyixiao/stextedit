@@ -29,7 +29,7 @@
 #include <QVector>
 
 #include "StringCovert.h"
-//#include "sdftree/sdftree.h"
+#include "sfatree/sfatree.h"
 
 namespace xpm {
 #ifdef Q_WS_MAC
@@ -1269,44 +1269,53 @@ namespace xpm {
 			////out_filename = out_filename.substr(0, len);
 			//// new a xpmdoc control
 			//// encoding is utf-16
-			//wstring syntax = StringCovert::qToStdWString( textEdit->toPlainText());
+			wstring syntax = StringCovert::qToStdWString( textEdit->toPlainText());
 			//// translate to new _syntax and new xpmdoc of outcontrol
 			////_translator.translateAll(syntax, xpmControl->xpmdoc(), _syntax, outControl.xpmdoc());
-			//SDFSign s(SDF_OBJECT) ;
-			//int err = _signparser.parse(syntax, xpmControl->model(), s);
-			//// outcontrol will save its xpmdoc in the out_file
-			//if ( err > 0) {
-			//	SDFTree tree(&s, this);
-			//	tree.exec();
-			//}else {
-			//	QMessageBox mbox;
-			//	char buffers[4];
-			//	itoa(err, buffers, 10);
-			//	string message = "Failed to parse since error code :";
-			//	message.append(buffers);
-			//	message.append(", message: ");
-			//	switch(err) {
-			//	case -1:
-			//		message.append("Incorrect of Syntax");
-			//		break;
-			//	case -2:
-			//		message.append("Part of Object or Array");
-			//		break;
-			//	case -3:
-			//		message.append("Part of STRING");
-			//		break;
-			//	case -4:
-			//		message.append("Part of PRIMITIVE");
-			//		break;
-			//	case -5:
-			//		message.append("Without Denotation Error");
-			//		break;
-			//	default:
-			//		message = "The syntax is empty";
-			//	}
-			//	mbox.setText(message.c_str());
-			//	mbox.exec();
-			//}
+			sfa_sign s(SFA_OBJECT);
+			//int err = _signparser.parse(syntax, xpmControl->xpmdoc(), s);
+			int err = _signparser.parse(syntax, *xpmControl->model(), s);
+			if (err <= 0) {
+				s.clear();
+				err = _tableparser.parse(textEdit->document(), *xpmControl->model(), s);
+			}
+			// outcontrol will save its xpmdoc in the out_file
+			if (err > 0) {
+				QMessageBox mbox;
+				mbox.setText("Parsed sucess!");
+				mbox.exec();
+				xpm::SFATree tree(xpmControl->termControl(), &s, this);
+				tree.exec();
+			}
+			else {
+				QMessageBox mbox;
+				char buffers[4];
+				itoa(err, buffers, 10);
+				string message = "Failed to parse since error code :";
+				message.append(buffers);
+				message.append(", message: ");
+				switch (err) {
+				case -1:
+					message.append("Incorrect of Syntax");
+					break;
+				case -2:
+					message.append("Part of Object or Array");
+					break;
+				case -3:
+					message.append("Part of STRING");
+					break;
+				case -4:
+					message.append("Part of PRIMITIVE");
+					break;
+				case -5:
+					message.append("Without Denotation Error");
+					break;
+				default:
+					message = "The syntax is empty";
+				}
+				mbox.setText(message.c_str());
+				mbox.exec();
+			}
 		}
 	}
 

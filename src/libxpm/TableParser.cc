@@ -69,15 +69,18 @@ namespace xpm {
 				_objects[text1] = token;
 				_toksuper->push_back(token);
 				_toklast = token;
-				_toksuper = _toklast;
+				_toksuper = token;
 			}
 			
 			//precondition of instance of a type
 			if (text2.empty()){
 				if (!text1.empty())
 					return -1;
-				if (text3.empty())
-					return 0;
+				if (text3.empty()){
+					sfa_parser parser;
+					result = parser.parse_atom_signs(model, r);
+					return result;
+				}
 			}else{
 				// precondition of a member of a array
 				if (i < rows && t->cellAt(i + 1, 1).firstCursorPosition().block().text().isEmpty()
@@ -114,7 +117,8 @@ namespace xpm {
 			}			
 		}
 		sfa_parser parser;
-		return parser.parse_atom_signs(model, r);
+		result = parser.parse_atom_signs(model, r);
+		return result;
 	}
 
 	int TableParser::parse_value(wstring text3, int pos, int len){

@@ -1,5 +1,6 @@
 #include "sfa_parser.h"
 #include <cstdlib>
+#include <iostream>
 
 int sfa_parser::parse(const wstring& syntax, sfa_model& doc, sfa_sign& root) {
 	_count = 0;
@@ -217,6 +218,7 @@ int sfa_parser::parse_atom_signs(sfa_model& doc, sfa_sign& r) {
 			int start = token->name_start();
 			int len = token->name_last() - start;
 			vector<sfa_map> trs = doc.find_maps(start, len);
+			//cout << "start :" << start << ", len" << len << ", found:" << trs.size() << endl;
 			for (vector<sfa_map>::iterator it = trs.begin(); it != trs.end(); ++it) {
 				token->name_append_map(it->word_ix, it->word, it->id);
 			}
