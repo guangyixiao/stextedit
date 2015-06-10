@@ -288,7 +288,7 @@
       </widget>
       <widget class="QTabWidget" name="termTab">
        <property name="currentIndex">
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="icon">

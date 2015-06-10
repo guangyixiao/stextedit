@@ -76,6 +76,8 @@ namespace xpm {
 		QAction* _addmapAction;
 		QAction* _removemapAction;
 		sfa_map_select _select;
+		//record the last map position
+		int _last_map_pos;
 	};
 
 	inline void XpmTextEdit::updateCompleter() {

@@ -33,6 +33,7 @@ namespace xpm {
 		_tableview(0),
 		_blockPosition(0),
 		_startPos(0),
+		_last_map_pos(0),
 		_c(0){
 			//setup hightlight format
 			//setup hightlight format
@@ -151,6 +152,9 @@ namespace xpm {
 		//refreseh the map
 		setCurrentCharFormat(_disHighlightFormat);
 		emit refreshMap();
+
+		// set last map position
+		_last_map_pos = _startPos + completion_str.size();
 	}
 
 	void XpmTextEdit::clear() {
@@ -172,7 +176,7 @@ namespace xpm {
 		QTextCursor cursor(textCursor());
 		cursor.select(QTextCursor::WordUnderCursor);
 		QString text = cursor.selectedText();
-		_startPos = cursor.selectionStart();
+		_startPos = cursor.selectionStart();			
 		_blockPosition = cursor.block().position();
 		return text;
 	}
@@ -347,7 +351,7 @@ namespace xpm {
 		if (!_c || (ctrlOrShift && e->text().isEmpty()))
 			return;
 
-		static QString eow("~!@#$%^&*()_+{}|:\"<>?,./;'[]\\-="); // end of word
+		static QString eow = QString::fromStdWString(L"~!@#$%^&*()_+{}|:\"<>?,./;'[]\\-=£¬¡£¡¢¡°¡±"); // end of word
 		bool hasModifier = (e->modifiers() != Qt::NoModifier) && !ctrlOrShift;
 		QString completionPrefix = textUnderCursor();
 
@@ -376,7 +380,7 @@ namespace xpm {
 			cout << "input length: " << e->replacementLength() << endl;
 			// begin the completer operation
 
-			static QString eow("~!@#$%^&*()_+{}|:\"<>?,./;'[]\\-="); // end of word
+			static QString eow("~!@#$%^&*()_+{}|:\"<>?,./;'[]\\-=£¬¡£¡°¡±¡¢"); // end of word
 			QString completionPrefix = textUnderCursor();
 
 			if ( completionPrefix.length() < 1
@@ -387,6 +391,11 @@ namespace xpm {
 
 			if (completionPrefix != _c->completionPrefix()) {
 				_c->setCompletionPrefix(completionPrefix);
+				// single character completion
+				if (completionPrefix != _c->completionPrefix()) {
+					QTextCursor cursor = textCursor();
+					_startPos = cursor.position() - 1;
+				}
 				if(_tableview)
 					_tableview->resizeColumnsToContents();
 				_c->popup()->setCurrentIndex(_c->completionModel()->index(0, 0));
@@ -451,6 +460,7 @@ namespace xpm {
 			//viewMap();
 			emit refreshMap();
 			highlightChars(_select.word_ix, _select.word.length());
+			_last_map_pos = _select.word_ix + _select.word.length();
 		}
 	}
 

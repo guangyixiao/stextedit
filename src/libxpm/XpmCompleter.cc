@@ -23,6 +23,10 @@ namespace xpm {
 		if(_termControl != 0 && !prefix.isEmpty()) {		
 			wstring sprefix(StringCovert::qToStdWString(prefix));
 			_termControl->PrefixSearch(sprefix, terms);	
+			if (terms.size() == 0 && prefix.size() > 1){
+				_prefix = prefix.right(1);
+				_termControl->PrefixSearch(_prefix.toStdWString(), terms);
+			}
 			if(_model) {
 				delete _model;
 				_model = NULL;
