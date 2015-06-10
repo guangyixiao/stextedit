@@ -105,11 +105,11 @@ ConexIde::ConexIde(QWidget *parent, Qt::WindowFlags flags)
 	delete ui.teTextEn;
 	ui.teTextEn = new xpm::XpmTextEdit(_xpmControl, p);	
 	l->addWidget(ui.teTextEn, 0, 1);
-	connect(ui.teTextEn, SIGNAL(refreshMap()), _enMapEditor, SLOT(viewMap()));
+	//connect(ui.teTextEn, SIGNAL(refreshMap()), _enMapEditor, SLOT(viewMap()));
 	delete ui.teTextCh;
 	ui.teTextCh = new xpm::XpmTextEdit(_chsXpmControl, p);	
 	l->addWidget(ui.teTextCh, 0, 2);
-	connect(ui.teTextCh, SIGNAL(refreshMap()), _chsMapEditor, SLOT(viewMap()));
+	//connect(ui.teTextCh, SIGNAL(refreshMap()), _chsMapEditor, SLOT(viewMap()));
 	//p->setLayout(Qt::LayoutDirection::);
 }
 
@@ -139,12 +139,12 @@ ConexIde::~ConexIde()
 }
 
 void ConexIde::CreateIids() {
-	_enMapEditor = new xpm::MapEditor(_xpmControl, ui.wdIidsEn);
+	/*_enMapEditor = new xpm::MapEditor(_xpmControl, ui.wdIidsEn);
 	QGridLayout* l = new QGridLayout(ui.wdIidsEn);
 	l->addWidget(_enMapEditor);
 	_chsMapEditor = new xpm::MapEditor(_chsXpmControl, ui.wdIidsChs);
 	l = new QGridLayout(ui.wdIidsChs);
-	l->addWidget(_chsMapEditor);
+	l->addWidget(_chsMapEditor);*/
 }
 
 void ConexIde::OpenVoc() {
@@ -223,7 +223,7 @@ void ConexIde::OpenVocFromFile(QString filename) {
 		ui.lePoneCh->hide();
 		ui.lePronCh->hide();
 		ui.teTextCh->hide();
-		ui.wdIidsChs->hide();
+		//ui.wdIidsChs->hide();
 		ui.lbEn->hide();
 		ui.lbCh->hide();
 		_be_single = true;
@@ -264,7 +264,7 @@ void ConexIde::OpenBoth() {
 		ui.lePoneCh->show();
 		ui.lePronCh->show();
 		ui.teTextCh->show();
-		ui.wdIidsChs->show();
+		//ui.wdIidsChs->show();
 		ui.lbEn->show();
 		ui.lbCh->show();
 		_be_single = false;		

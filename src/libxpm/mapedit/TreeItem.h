@@ -20,16 +20,16 @@ namespace xpm {
      QVariant data(int column) const;
      int row() const;
      TreeItem *parent();
-	 sfa_select_map *range();
+	 sfa_map_select *range();
 
  private:
      QList<TreeItem*> childItems;
      QList<QVariant> itemData;
      TreeItem *parentItem;
-	 sfa_select_map _range;
+	 sfa_map_select _range;
  };
 
-	inline sfa_select_map* TreeItem::range() {
+	inline sfa_map_select* TreeItem::range() {
 		return &_range;
 	}
 

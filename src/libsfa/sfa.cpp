@@ -231,6 +231,8 @@ sfa_range sfa_model::remove_map(int word_ix, int block_ix) {
 					range.len = t->word.length();
 					range.pos = t->word_ix + (*i)->ix();
 					(*i)->maps().erase(t);
+					if ((*i)->maps().size() == 0)
+						_blocks.erase(i);
 					return range;
 				}
 			}

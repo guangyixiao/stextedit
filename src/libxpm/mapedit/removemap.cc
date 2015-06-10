@@ -5,7 +5,7 @@
 
 namespace xpm {
 	//RemoveMap::RemoveMap(XpmTermDocControl* xpmControl, SelectionRange *range, QWidget *parent) :QDialog(parent),
-	RemoveMap::RemoveMap(XpmTableDocControl* xpmControl, sfa_select_map *range, QWidget *parent) :QDialog(parent),
+	RemoveMap::RemoveMap(XpmTableDocControl* xpmControl, sfa_map_select *range, QWidget *parent) :QDialog(parent),
 		_range(range),
 		_xpmControl(xpmControl),
 		ui(new Ui::RemoveMap){
@@ -33,6 +33,7 @@ namespace xpm {
 	}
 
 	void RemoveMap::RemoveMapAccept() {
+		cout << "block_ix :" << _range->block_ix << ", word_ix" << _range->word_ix << endl;
 		_xpmControl->remove_map(_range->word_ix, _range->block_ix);
 		accept();
 	}

@@ -82,8 +82,6 @@ namespace xpm {
 			this, SLOT(currentCharFormatChanged(QTextCharFormat)));
 		connect(textEdit, SIGNAL(cursorPositionChanged()),
 			this, SLOT(cursorPositionChanged()));
-		connect(textEdit, SIGNAL(selectionChanged()),
-			this, SLOT(selectionChanged()));
 		connect(textEdit, SIGNAL(refreshMap()), mapEdit, SLOT(viewMap()));
 		connect(mapEdit, SIGNAL(highlightSelection(int, int)), this, SLOT(highlightSelection(int,int)));
 		connect(mapEdit, SIGNAL(disHighlightSelection(int, int)), this, SLOT(disHighlightSelection(int, int)));
@@ -1171,27 +1169,7 @@ namespace xpm {
 			actionAlignJustify->setChecked(true);
 		}
 	}
-
-	void Xpm::selectionChanged() {
-		QTextCursor cursor(textEdit->textCursor());
-		QString selectedtext = cursor.selectedText();
-		sfa_select selectionrange = xpmControl->select();
-		bool enable = false;
-		if(selectedtext.count() > 0) {			
-			selectionrange.word = StringCovert::qToStdWString(  selectedtext );
-			selectionrange.word = cursor.selectionStart();
-			selectionrange.block_ix = cursor.block().position();
-			enable = true;
-			//termrange.set
-		}else {
-			//clear
-			selectionrange.word.clear();
-			selectionrange.word_ix = 0;
-			selectionrange.block_ix = 0;
-		}
-		mapEdit->setAddMapEnable(enable);
-	}
-
+	
 	void Xpm::highlightSelection(int pos, int length) {
 		QTextCursor cursor(textEdit->textCursor());
 		cursor.setPosition(pos);

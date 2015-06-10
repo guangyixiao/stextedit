@@ -12,6 +12,8 @@
 using namespace std;
 
 namespace xpm {
+	// the current select of a substr on a text
+
 	class XpmTextEdit: public QTextEdit {
 		Q_OBJECT
 	public:
@@ -22,11 +24,6 @@ namespace xpm {
 		void setCompleter();
 		void setCompleter(XpmCompleter *c);
 		XpmCompleter* completer() const;
-		//XpmClipboard& xpmclipboard();
-		//XpmTermDocControl* docControl();
-		//XpmDocControl* docControl();
-		//void setDocControl(XpmTermDocControl* control);
-		//void setDocControl(XpmDocControl* control);
 		void copyXpmDoc();
 		void insertXpmDoc(int start, int blockpos);
 		void updateCompleter();
@@ -50,12 +47,16 @@ namespace xpm {
 		void insertTerm(conex::Term* term);
 		void termsChange(int position, int charsRemoved, int charsAdded);
 		void copyIid();
+		void selectionChanged();
+		void addMap();
+		void removeMap();
     signals:
 		void refreshMap();
 	public:
 		QString textUnderCursor();
 		void dishighlightRemainRangePair(int position, sfa_ranges& pair);
-		void dishighlightAddedChars(int position, int charsAdded);
+		void dishighlightChars(int position, int charsAdded);
+		void highlightChars(int position, int charsAdded);
 	private:
 		// insert spaces as bellow
 		void insertSpacesAsBellow();
@@ -72,11 +73,10 @@ namespace xpm {
 		// find a iid
 		string _iid;
 		QAction* _copyiid;
+		QAction* _addmapAction;
+		QAction* _removemapAction;
+		sfa_map_select _select;
 	};
-
-	/*inline XpmClipboard& XpmTextEdit::xpmclipboard() {
-		return _xpmclipboard;
-	}*/
 
 	inline void XpmTextEdit::updateCompleter() {
 		TermControl* control = _xpmControl->termControl();

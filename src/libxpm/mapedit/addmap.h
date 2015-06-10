@@ -22,7 +22,7 @@ namespace xpm {
 
 	public:
 		//explicit AddMap(XpmTermDocControl* _xpmControl, QWidget *parent = 0);
-		explicit AddMap(XpmTableDocControl* _xpmControl, QWidget *parent = 0);
+		explicit AddMap(XpmTableDocControl* _xpmControl, sfa_map_select* _select, QWidget *parent = 0);
 		~AddMap();
 		conex::Term* term();
 	public slots:
@@ -34,6 +34,7 @@ namespace xpm {
 		//XpmTermDocControl* _xpmControl;
 		XpmTableDocControl* _xpmControl;
 		conex::Term*  _term;
+		sfa_map_select* _select;
 	};
 
 	inline conex::Term *AddMap::term() {

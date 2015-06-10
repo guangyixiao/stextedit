@@ -28,11 +28,10 @@ namespace xpm {
 
 	void MapEditor::addMap() {
 		//we need to refresh the maps
-		AddMap addMap(_xpmControl, this);
+		AddMap addMap(_xpmControl,&_range, this);
 		if(QDialog::Accepted == addMap.exec()) {
 			viewMap();
-			sfa_select range = _xpmControl->select();
-			emit highlightSelection(range.word_ix, range.word.length());
+			emit highlightSelection(_range.block_ix+_range.word_ix, _range.word.length());
 			ui->addMapButton->setEnabled(false);
 		}
 	}
@@ -43,7 +42,7 @@ namespace xpm {
 			if(QDialog::Accepted == removeMap.exec()) {
 				cout << "remove map accepted" << endl;
 				viewMap();
-				emit disHighlightSelection(_range.word_ix, _range.word.length());
+				emit disHighlightSelection(_range.block_ix+_range.word_ix, _range.word.length());
 				ui->removeMapButton->setEnabled(false);
 			}
 		}
@@ -110,7 +109,7 @@ namespace xpm {
 		if(currentItem->parent() != model->GetRootItem()) {
 			enable = true;
 			_range = *(currentItem->range());
-			emit selectMapRange(_range.word_ix, _range.word.length());
+			emit selectMapRange(_range.block_ix+_range.word_ix, _range.word.length());
 		}else {
 			enable = false;
 			_range.block_ix = 0;

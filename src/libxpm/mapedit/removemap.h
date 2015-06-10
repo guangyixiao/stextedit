@@ -21,7 +21,7 @@ namespace xpm {
 
 	public:
 		//explicit RemoveMap(XpmTermDocControl* _xpmControl, SelectionRange* range, QWidget *parent = 0);
-		explicit RemoveMap(XpmTableDocControl* _xpmControl, sfa_select_map* range, QWidget *parent = 0);
+		explicit RemoveMap(XpmTableDocControl* _xpmControl, sfa_map_select* range, QWidget *parent = 0);
 		~RemoveMap();
 
 		void FindTermByRange();
@@ -30,7 +30,7 @@ namespace xpm {
 		void RemoveMapCancel();
 	private:
 		Ui::RemoveMap *ui;
-		sfa_select_map *_range;
+		sfa_map_select *_range;
 		//XpmTermDocControl* _xpmControl;
 		XpmTableDocControl* _xpmControl;
 	};

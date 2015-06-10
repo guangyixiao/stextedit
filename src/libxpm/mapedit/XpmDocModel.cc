@@ -132,9 +132,9 @@ namespace xpm {
 				termColumnData << iid;
 				TreeItem *termItem = new TreeItem(termColumnData, blockItem);
 				blockItem->appendChild(termItem);
-				sfa_select_map* range  = termItem->range();
+				sfa_map_select* range  = termItem->range();
 				range->block_ix = (*it)->ix();
-				range->word_ix = j->word_ix + (*it)->ix();
+				range->word_ix = j->word_ix;
 				range->word = j->word;
 				range->id = j->id;
 			}

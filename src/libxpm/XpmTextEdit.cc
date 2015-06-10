@@ -21,6 +21,8 @@
 #include <qheaderview.h>
 #include "model/Term.h"
 #include "StringCovert.h"
+#include "mapedit/addmap.h"
+#include "mapedit/removemap.h"
 
 
 namespace xpm {
@@ -51,7 +53,12 @@ namespace xpm {
 			setAttribute(Qt::WA_InputMethodEnabled, true);
 			// construct the iid copy action
 			_copyiid = new QAction(tr("copy iid"), this);
+			_addmapAction = new QAction(tr("add map"), this);
+			_removemapAction = new QAction(tr("remove map"), this);
 			connect(_copyiid, SIGNAL(triggered()), this, SLOT(copyIid()));
+			connect(_addmapAction, SIGNAL(triggered()), this, SLOT(addMap()));
+			connect(_removemapAction, SIGNAL(triggered()), this, SLOT(removeMap()));
+			connect(this, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
 	}
 	XpmTextEdit::~XpmTextEdit() {
 		if(_c) {
@@ -189,7 +196,7 @@ namespace xpm {
 				QTime tm;
 		        tm.start();
 				position += charsRemoved;
-				dishighlightAddedChars(position, charsAdded);
+				dishighlightChars(position, charsAdded);
 				pair = _xpmControl->insert_chars(position, delt);
 				int millseconds = tm.elapsed();
 				cout << "Add Chars to Model, chars :" << delt << ",time:" << millseconds << endl;
@@ -199,11 +206,18 @@ namespace xpm {
 		}
 	}
 
-	void XpmTextEdit::dishighlightAddedChars(int position, int charsAdded) {
+	void XpmTextEdit::dishighlightChars(int position, int charsAdded) {
 		QTextCursor cursor(textCursor());
 		cursor.setPosition(position);
 		cursor.movePosition(QTextCursor::Right,QTextCursor::KeepAnchor, charsAdded);
 		cursor.mergeCharFormat(_disHighlightFormat);
+	}
+
+	void XpmTextEdit::highlightChars(int position, int charsAdded) {
+		QTextCursor cursor(textCursor());
+		cursor.setPosition(position);
+		cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, charsAdded);
+		cursor.mergeCharFormat(_highlightFormat);
 	}
 
 	void XpmTextEdit::dishighlightRemainRangePair(int position, sfa_ranges& pair) {		
@@ -399,6 +413,9 @@ namespace xpm {
 			menu->addAction(_copyiid);
 			_iid = map->id;
 		}		
+		if (_select.word.size() > 0) {
+			menu->addAction(_addmapAction);
+		}
 		menu->exec(e->globalPos());
 		delete menu;
 	}
@@ -406,5 +423,46 @@ namespace xpm {
 	void XpmTextEdit::copyIid() {
 		QClipboard* clipboard = QApplication::clipboard();
 		clipboard->setText(QString::fromStdString (_iid));
+	}
+
+	void XpmTextEdit::selectionChanged() {
+		QTextCursor cursor(textCursor());
+		QString selectedtext = cursor.selectedText();		
+		bool enable = false;
+		if (selectedtext.count() > 0) {
+			_select.word = selectedtext.toStdWString();
+			_select.word_ix = cursor.selectionStart();
+			_select.block_ix = cursor.block().position();
+			enable = true;
+			//termrange.set
+		}
+		else {
+			//clear
+			_select.word.clear();
+			_select.word_ix = 0;
+			_select.block_ix = 0;
+		}
+	}
+
+	void XpmTextEdit::addMap() {
+		//we need to refresh the maps
+		AddMap addMap(_xpmControl, &_select, this);
+		if (QDialog::Accepted == addMap.exec()) {
+			//viewMap();
+			emit refreshMap();
+			highlightChars(_select.word_ix, _select.word.length());
+		}
+	}
+
+	void XpmTextEdit::removeMap() {
+		if (_select.word.size() > 0) {
+			RemoveMap removeMap(_xpmControl, &_select, this);
+			if (QDialog::Accepted == removeMap.exec()) {
+				cout << "remove map accepted" << endl;
+				//viewMap();
+				emit refreshMap();
+				dishighlightChars(_select.block_ix+_select.word_ix, _select.word.length());
+			}
+		}
 	}
 }

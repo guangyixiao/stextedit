@@ -95,9 +95,7 @@ namespace xpm {
 			void clipboardDataChanged();
 			void about();
 			void printPreview(QPrinter *);
-
-			void selectionChanged();
-
+						
 			//set colors
 			void highlightSelection(int pos, int length);
 			void disHighlightSelection(int pos, int length);

@@ -20,13 +20,7 @@ struct sfa_map {
 	string id;
 };
 // the current select of a substr on a text
-struct sfa_select {
-	int word_ix;
-	int block_ix;
-	wstring word;
-};
-// the current select of a substr on a text
-struct sfa_select_map {
+struct sfa_map_select {
 	int word_ix;
 	int block_ix;
 	wstring word;
@@ -139,12 +133,9 @@ public:
 	void set_model(sfa_model* m);
 	// get the current select in the content
 	// get the cache select
-	sfa_select& select();
 	// set cache select
-	void set_select(int word_ix, wstring word, int block_ix = 0);
 private:
 	sfa_model* _model;
-	sfa_select _select;
 };
 
 inline sfa_model* sfa::safe_model(sfa_model* m) {
@@ -162,13 +153,5 @@ inline void sfa::set_model(sfa_model *m) {
 	_model = m;
 }
 
-inline sfa_select& sfa::select() {
-	return _select;
-}
-inline void sfa::set_select(int word_ix, wstring word, int block_ix) {
-	_select.word_ix = word_ix;
-	_select.block_ix = block_ix;
-	_select.word = word;
-}
 
 #endif

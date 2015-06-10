@@ -27,6 +27,7 @@ namespace xpm {
 
 		//interface for button enable
 		void setAddMapEnable(bool enable);
+		sfa_map_select& select();
 	protected:
 		void showEvent(QShowEvent* event);
     signals:
@@ -43,12 +44,16 @@ namespace xpm {
 		void selectionChangedSlot(const QItemSelection & newSelection, const QItemSelection & oldSelection);
 
 	private:
-		sfa_select_map _range;
+		sfa_map_select _range;
 		XpmDocModel* model;
 		Ui::MapEditor *ui;
 		//XpmTermDocControl* _xpmControl;
 		XpmTableDocControl* _xpmControl;
 	};
+
+	inline sfa_map_select& MapEditor::select() {
+		return _range;
+	}
 }
 
 #endif // MAPEDITOR_H
