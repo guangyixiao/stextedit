@@ -130,7 +130,7 @@ namespace xpm {
 		_highlightFormat.setUnderlineStyle(QTextCharFormat::SingleUnderline);
 		_dishighlightFormat.setUnderlineStyle(QTextCharFormat::NoUnderline);
 
-		QString initialFile = QApplication::applicationDirPath() + "data/example_en.sebd";
+		QString initialFile = QApplication::applicationDirPath() + "/data/example_en.sebd";
 		const QStringList args = QCoreApplication::arguments();
 		if (args.count() == 2) {
 			initialFile = args.at(1);			
@@ -861,12 +861,12 @@ namespace xpm {
 	}
 
 	void Xpm::fileOpenTemplate() {
-		QString tempFile("data/templateExample.sebd");
+		QString tempFile = QApplication::applicationDirPath() + "/data/templateExample.sebd";
 		loadTable(tempFile);
 	}
 
 	void Xpm::fileOpenReification() {
-		QString tempFile("data/reificationExample.sebd");
+		QString tempFile = QApplication::applicationDirPath() + "/data / reificationExample.sebd";
 		loadTable(tempFile);
 	}
 

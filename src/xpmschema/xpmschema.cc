@@ -133,7 +133,7 @@ namespace xpm {
 
 		/*if (!load(initialFile))
 			fileNew();*/
-		QString initialFile = QApplication::applicationDirPath() + "data/example_en.sebds";
+		QString initialFile = QApplication::applicationDirPath() + "/data/example_en.sebds";
 		const QStringList args = QCoreApplication::arguments();
 		if (args.count() == 2) {
 			initialFile = args.at(1);			
