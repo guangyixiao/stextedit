@@ -130,8 +130,7 @@ namespace xpm {
 		_highlightFormat.setUnderlineStyle(QTextCharFormat::SingleUnderline);
 		_dishighlightFormat.setUnderlineStyle(QTextCharFormat::NoUnderline);
 
-
-		QString initialFile("data/example_en.sebd");
+		QString initialFile = QApplication::applicationDirPath() + "data/example_en.sebd";
 		const QStringList args = QCoreApplication::arguments();
 		if (args.count() == 2) {
 			initialFile = args.at(1);			
