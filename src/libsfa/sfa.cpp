@@ -2,7 +2,7 @@
 #include <fstream>
 #include <streambuf>
 #include "sfa.h"
-#include "libjson.h"
+#include "libjson/libjson.h"
 // blocks
 sfa_block::sfa_block(sfa_maps& maps, int ix) : _ix(ix) {
 	_maps.swap(maps);

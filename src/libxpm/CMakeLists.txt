@@ -72,10 +72,10 @@ file(GLOB_RECURSE HEADERS ${libxpm_SOURCE_DIR}/*.h)
 #create the libraries
 SET(libconex ../libconex)
 SET(libsfa ../libsfa)
-SET(libjson ../../../libs/libjson-master)
+SET(libs ../../include)
 
 INCLUDE_DIRECTORIES( ${libxpm_SOURCE_DIR} 
-                     ${libjson}
+                     ${libs}
 					 ${libsfa}
 					 ${libconex}
 					 )			 

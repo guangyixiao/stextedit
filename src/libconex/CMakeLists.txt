@@ -1,7 +1,6 @@
 PROJECT(libconex)
 
 #find xerces package
-FIND_PACKAGE(XERCESC REQUIRED)
 
 #add the files to our groups and core
 SOURCE_GROUP("control" ./control/*)
@@ -53,10 +52,11 @@ SET(libconex_Files
 #find our headers
 file(GLOB_RECURSE HEADERS ${libconex_SOURCE_DIR}/*.h ${libconex_SOURCE_DIR}/*.hpp)
 
+SET(libs ../../include)
 
 #create the libraries
 INCLUDE_DIRECTORIES( ${libconex_SOURCE_DIR}
-                     ${XERCESC_INCLUDE_DIR}
+                     ${libs}
 					 )
 
 #add_executable(CONEX-App

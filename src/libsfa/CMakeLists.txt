@@ -1,7 +1,7 @@
 PROJECT (libsfa)
 # add libjson lib
-SET(libjson ../../../../libs/libjson-master)
-INCLUDE_DIRECTORIES( ${libjson})
+SET(libs ../../include)
+INCLUDE_DIRECTORIES( ${libs})
 
 SET(libsfa_Files
     ./sfa_parser.cpp
@@ -30,7 +30,8 @@ add_executable(sfa
 	${HEADERS}
 )
 
+link_directories(../../library)
+
 TARGET_LINK_LIBRARIES(sfa
                       libsfa 
-                      D:/Projects/libs/libjson-master/bin/release/libjson.lib
-					  )					 
+                      )					 

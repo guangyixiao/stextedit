@@ -31,27 +31,26 @@ file(GLOB_RECURSE HEADERS ${xpm-instance_SOURCE_DIR}/*.h)
 SET(libxpm ../libxpm)
 SET(libconex ../libconex)
 SET(libsfa ../libsfa)
-SET(libjson ../../../libs/libjson-master)
+SET(libs ../../include)
 
 INCLUDE_DIRECTORIES( ${libxpm}
                      ${libconex}
                      ${libsfa}
-					 ${libjson} )		 
+					 ${libjson}
+					 ${libs})		 
 
 
 add_executable(xpm-instance
 	           ${xpm-instance_Files} 
 	           ${HEADERS})
 
-FIND_PACKAGE(XERCESC REQUIRED)
+link_directories(../../library)
 
 TARGET_LINK_LIBRARIES(xpm-instance
                       libsfa 
                       libconex 
                       libxpm	
-                      D:/projects/libs/libjson-master/bin/release/libjson.lib					  
-					  ${XERCESC_LIBRARY}
-					  Qt5::Widgets
+                      Qt5::Widgets
 					  Qt5::PrintSupport)
   
 #set properties on the libraries

@@ -39,12 +39,12 @@ file(GLOB_RECURSE HEADERS ${conex_SOURCE_DIR}/*.h)
 SET(libxpm ../libxpm)
 SET(libconex ../libconex)
 SET(libsfa ../libsfa)
-SET(libjson ../../../libs/libjson-master)
+SET(libs ../../include)
 
 INCLUDE_DIRECTORIES( ${libxpm}
                      ${libconex}
                      ${libsfa}
-					 ${libjson}
+					 ${libs}			
 					 )	
 
 add_executable(conex
@@ -53,13 +53,13 @@ add_executable(conex
 
 FIND_PACKAGE(XERCESC REQUIRED)
 
+link_directories(../../library)
+
 TARGET_LINK_LIBRARIES(conex
                       libsfa 
                       libconex 
                       libxpm	
-                      D:/Projects/libs/libjson-master/bin/release/libjson.lib					  
-					  ${XERCESC_LIBRARY}
-					  Qt5::Widgets )
+                      Qt5::Widgets )
 			   
 					  
 #set properties on the libraries
